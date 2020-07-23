@@ -1,9 +1,10 @@
 # FreePBX on Docker
 
-[<img src="https://img.shields.io/docker/pulls/flaviostutz/freepbx"/>](https://hub.docker.com/r/flaviostutz/freepbx)
-[<img src="https://img.shields.io/docker/automated/flaviostutz/freepbx"/>](https://hub.docker.com/r/flaviostutz/freepbx)
+[<img src="https://img.shields.io/docker/pulls/tfcloete/freepbx"/>](https://hub.docker.com/r/tfcloete/freepbx)
+[<img src="https://img.shields.io/docker/automated/tfcloete/freepbx"/>](https://hub.docker.com/r/tfcloete/freepbx)
 
-FreePBX container image for running a complete Asterisk server.
+FreePBX container image for running a complete Asterisk server - as forked from [flaviostutz/freepbx](https://github.com/flaviostutz/freepbx).
+This development, including the content of this readme, was done by Flavio Stutz. I added the Asterisk queue module to the dokerfile - and made a few configuration changes required for our deployment to the docker-hub.yml
 
 With this container you can create a telephony system in your office or house with integration among various office branches and integration to external VOIP providers with features such as call recording and IVR (interactive voice response) Menus.
 
@@ -29,7 +30,12 @@ This image is used in production deployments.
 version: '3.3'
 services:
   freepbx:
-    image: flaviostutz/freepbx
+    image: tfcloete/freepbx
+    container_name: asterisk
+    hostname: borderpbx
+    extra_hosts:
+      - "borderpbx:127.0.0.1"
+    network_mode: "host"
     ports:
       - 8080:80
       - 5060:5060/udp
@@ -48,6 +54,10 @@ volumes:
   recordings:
 ```
 
+* Create the docker container - but DON'T start it yet! ```docker-compose up --no-start```
+
+* Restore the Asterisk configuration from backup. ```docker cp new.tar.gz <CONTAINER_ID>:backup/```
+
 * Run ```docker-compose up -d```
 
 * Open admin panel at http://localhost:8080/admin/
@@ -57,30 +67,6 @@ volumes:
 * Install Ubuntu 18.04
 
 * Install Docker + Docker Compose
-
-* Configure network
-
-  * edit /etc/netplan/50-cloud-init.yaml
-
-```yml
-network:
-    ethernets:
-        eno1:
-            addresses:
-               - 10.1.2.5/22
-               - 10.223.49.234/29
-            nameservers:
-               addresses: [10.1.1.254,8.8.8.8]
-            gateway4: 10.1.1.254
-            routes:
-               - to: 10.128.0.0/9
-                 via: 10.223.49.233
-    version: 2
-```
-
-* run ```netplan apply```
-
-* In this example suppose you have a VOIP provider in another network (10.223.x.x) connected to the Asterisk host. You can skip routes and the secondary address if not needed
 
 * Run this container
 

@@ -85,7 +85,7 @@ RUN /etc/init.d/mysql start && \
     echo "Updating FreePBX modules..." && \
     fwconsole chown && \
     fwconsole ma upgradeall && \
-    fwconsole ma downloadinstall backup bulkhandler ringgroups timeconditions ivr restapi cel configedit asteriskinfo certman ucp webrtc && \
+    fwconsole ma downloadinstall backup bulkhandler queues ringgroups timeconditions ivr restapi cel configedit asteriskinfo certman ucp webrtc && \
     # mysqldump -uroot -d -A -B --skip-add-drop-table > /mysql-freepbx.sql && \
     /etc/init.d/mysql stop && \
     gpg --refresh-keys --keyserver hkp://keyserver.ubuntu.com:80 && \
